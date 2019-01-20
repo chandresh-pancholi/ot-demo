@@ -37,5 +37,17 @@ Observability demo
     
     #4. Select ot-demo from service in Jaeger UI
     
+    #5. Hot-ROD demo
+        docker run \
+          --rm \
+          --link jaeger \
+          --env JAEGER_AGENT_HOST=jaeger \
+          --env JAEGER_AGENT_PORT=6831 \
+          -p8080-8083:8080-8083 \
+          jaegertracing/example-hotrod:latest \
+          all
+    
+    #6. http://localhost:8080. 
+        Select one customer and check the trace in Jaeger UI
     
 
