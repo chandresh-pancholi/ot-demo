@@ -1,0 +1,38 @@
+buildscript {
+    ext {
+        springBootVersion = '2.1.2.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.ot.demo'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.projectlombok:lombok:1.18.4')
+
+//    compile group: 'io.opentracing.contrib', name: 'opentracing-spring-cloud-starter', version: '0.2.2'
+
+    compile group: 'io.opentracing.contrib', name: 'opentracing-spring-jaeger-web-starter', version: '1.0.1'
+
+    compile group: 'io.opentracing.contrib', name: 'opentracing-mongo-driver', version: '0.0.6'
+    compile group: 'io.opentracing.contrib', name: 'opentracing-elasticsearch6-client', version: '0.0.7'
+    compile group: 'io.opentracing.contrib', name: 'opentracing-kafka-client', version: '0.0.16'
+
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
