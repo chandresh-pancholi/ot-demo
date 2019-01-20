@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ot-demo
+spec:
+  containers:
+  - name: ot-demo
+    image: jaegertracing/example-hotrod:1.8
