@@ -31,4 +31,31 @@ public class AppConfig {
     @Value("${mongo.database.max.connection}")
     private int mongMaxConnectionPerHost;
 
+    @Value("${kafka.brokers}")
+    private String kafkaBrokers;
+
+    @Value("${kafka.group.id}")
+    private String groupId;
+
+    @Value("${kafka.key.deserializer}")
+    private String keyDeSerialiser;
+
+    @Value("${kafka.value.deserializer}")
+    private String valueDeserialiser;
+
+    @Value("${kafka.auto.commit.interval}")
+    private int autoCommitInterval;
+
+    @Value("${kafka.auto.commit.enable}")
+    private boolean autoCommitEnable;
+
+    @Value("${kafka.enable.auto.offset}")
+    private String offsetReset;
+
+    @Value("${kafka.producer.cliendId}")
+    private String kafkaProducerClientId;
+
+
+
+
 }

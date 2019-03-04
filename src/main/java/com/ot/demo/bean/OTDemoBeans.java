@@ -10,6 +10,9 @@ import io.opentracing.Tracer;
 import io.opentracing.contrib.elasticsearch6.TracingPreBuiltTransportClient;
 import io.opentracing.contrib.mongo.TracingMongoClient;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.cluster.metadata.IndexMetaData;
@@ -22,6 +25,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
+import java.util.Properties;
 
 @Component
 @Slf4j
@@ -61,12 +65,24 @@ public class OTDemoBeans {
         return database;
     }
 
+    @Bean
+    public KafkaProducer<String, String> kafkaProducer() {
+        Properties props = new Properties();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, appConfig.getKafkaBrokers());
+        props.put(ProducerConfig.CLIENT_ID_CONFIG, appConfig.getKafkaProducerClientId());
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        //props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, CustomPartitioner.class.getName());
+
+        return new KafkaProducer<>(props);
+    }
+
 
     @Bean
     @Singleton
     public TransportClient elasticsearchClient() throws Exception {
         Settings settings = Settings.builder()
-                .put("cluster.name", "elasticsearch").build();
+                .put("cluster.name", "elasticsearch_Chandresh").build();
 
         TransportClient transportClient = new TracingPreBuiltTransportClient(settings)
                 .addTransportAddress(new TransportAddress(InetAddress.getByName("localhost"), 9300));

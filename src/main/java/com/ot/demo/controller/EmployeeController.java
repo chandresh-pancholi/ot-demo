@@ -5,8 +5,11 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.ot.demo.model.Employee;
 import io.opentracing.Tracer;
+import io.opentracing.contrib.kafka.TracingKafkaProducer;
 import io.opentracing.contrib.spring.web.client.TracingRestTemplateInterceptor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.bson.Document;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.transport.TransportClient;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/emp")
@@ -39,15 +43,15 @@ public class EmployeeController {
     private Tracer tracer;
 
     @Autowired
+    private KafkaProducer<String, String> kafkaProducer;
+
+    @Autowired
     public EmployeeController(MongoDatabase mongoDatabase) {
         this.collection = mongoDatabase.getCollection("employee");
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Employee AddEmployee(@RequestBody Employee employee) throws Exception {
-
-
-
         Document document = Document.parse(objectMapper.writeValueAsString(employee) );
 
         collection.insertOne(document);
@@ -67,8 +71,15 @@ public class EmployeeController {
                 = "http://localhost:22000/salary/123";
         ResponseEntity<String> response
                 = restTemplate.getForEntity(fooResourceUrl, String.class);
+        TracingKafkaProducer<String, String> tracingProducer = new TracingKafkaProducer<>(kafkaProducer,
+                tracer);
 
+        ProducerRecord<String, String> record = new ProducerRecord<>("ot-demo-test-topic", "Hello");
+
+        tracingProducer.send(record);
         log.info(response.toString());
+
+
 
         return employee;
     }
